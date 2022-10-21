@@ -1,17 +1,7 @@
-# ReturnPeriods
-Contains all the code used for the MetOffice climate data hackathon on estimating return periods of extreme weather events in real-time. 
-A detailed description of the whole project can be found under: https://docs.google.com/document/d/1ocDuQWdPbRrBUg4udG5B84PQWHvSRWDzzbtRQMsSQQ8/edit 
+## README
 
-## Folder Structure
+This repository contains all the coding that is done for the return periods publication. 
+The data folder is not cntained in the repository since some of the datasets are bigger than 1GB. 
+The data can be accessed via OneDrive [here](https://1drv.ms/u/s!AlGyfgaXhHibhMY_ArvfTsbR_Edcag?e=GcWM3r).
+To use the data with the scripts, we recommend downloading it to your local machine.
 
-### ERA5_rainfall 
-Contains the raw data of February 2020 rainfall and calculated return periods, not used in the visualisation.
-
-### ForecastData 
-Contains the link to the dropbox with the raw data, the processed data used for the visualisation and the scripts to create the processed data.
-
-### Return_Periods_ERA5
-Contains the raw data of the ERA5 rainfall return periods and the regridded data together with the scripts to produce it. 
-
-### Visualisation 
-Contains the scripts used for the visualisation.
