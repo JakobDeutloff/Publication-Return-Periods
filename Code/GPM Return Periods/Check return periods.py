@@ -20,7 +20,7 @@ matplotlib.rcParams.update({'font.size': 12})
 # %% read GMP and ERA5 data
 GPM = xr.open_dataset('Data/GPM/GPM_climatology_2000_2021.nc4')
 GPM_rp10 = xr.open_dataset('Data/GPM/ReturnPeriods/rp10.nc4')
-ERA_rp10 = xr.open_dataset('Data/Return_Periods_ERA5/UK/ERA_UK_rp10.nc4')
+ERA_rp10 = xr.open_dataset('Data/ERA/UK/ERA_UK_rp10.nc4')
 
 # Drop unnecessary dim from GPM rp
 GPM_rp10 = GPM_rp10.sel(return_period=10)
