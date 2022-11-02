@@ -17,60 +17,97 @@ from scipy.stats import genextreme
 # %% set font size
 matplotlib.rcParams.update({'font.size': 12})
 
-# %% read GMP and ERA5 data
+# %% def plot function
+
+def plot_ERA_GPM(ERA_rp, GPM_rp, rp, c_max, c_min, levels, land, lat_min, lat_max, lon_min, lon_max):
+
+
+    # Set Colorbar
+    cmap = ccm.cm.rain
+
+    # Plot
+    fig, axes = plt.subplots(1, 2, subplot_kw={'projection': ccrs.PlateCarree()}, figsize=(10, 5.5), sharey=True)
+    axes[0].add_feature(ft.OCEAN, zorder=1, color='grey')
+    axes[1].add_feature(ft.OCEAN, zorder=1, color='grey')
+    axes[1].add_feature(ft.BORDERS)
+    axes[0].add_feature(ft.BORDERS)
+    GPM_rp.precipitationCal.plot.contourf(ax=axes[0], x='longitude', y='latitude', transform=ccrs.PlateCarree(),
+                                            vmax=c_max, vmin=c_min, levels=levels, add_colorbar=False, cmap=cmap, extend='both')
+    cm = ERA_rp.plot.contourf(ax=axes[1], transform=ccrs.PlateCarree(), vmax=c_max, vmin=c_min, levels=levels,
+                                        add_colorbar=False, cmap=cmap, extend='both')
+
+    # Add Grid and Labels
+    for ax in axes:
+        gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='k', alpha=0.5, linestyle='--')
+        gl.top_labels = False
+        gl.right_labels = False
+        ax.set_xlim(lon_min, lon_max)
+        ax.set_ylim(lat_min, lat_max)
+    gl.left_labels = False
+
+    # Add Colorbar
+    fig.subplots_adjust(bottom=0.13)
+    cbar_ax = fig.add_axes([0.15, 0.1, 0.7, 0.05])
+    fig.colorbar(cm, cax=cbar_ax, orientation='horizontal', pad=0.01, label='Daily Precipitation [mm]')
+
+    # Titles
+    axes[0].set_title('GPM')
+    axes[1].set_title('ERA5')
+
+    # Save and show
+    plt.savefig('Plots/'+land+'/'+str(rp)+'yRP_GPM_ERA.png', bbox_inches='tight')
+    plt.show()
+
+def read_GPM(rp, land):
+
+    # read GMP and ERA5 data
+    GPM = xr.open_dataset('Data/GPM/'+land+'/GPM_'+land+'_rp'+str(rp)+'.nc4')
+
+    # Drop unnecessary dim from GPM rp
+    GPM = GPM.sel(return_period=rp)
+    GPM = GPM.rename({'lon': 'longitude', 'lat': 'latitude'})
+    GPM = GPM.reset_coords('return_period', drop=True)
+
+    return GPM
+
+# %% Plot ERA5 and GPM data for all rps
+
 GPM = xr.open_dataset('Data/GPM/GPM_climatology_2000_2021.nc4')
-GPM_rp10 = xr.open_dataset('Data/GPM/ReturnPeriods/rp10.nc4')
-ERA_rp10 = xr.open_dataset('Data/ERA/UK/ERA_UK_rp10.nc4')
+rps = [5, 10, 25]
+GPM_UK = {}
+GPM_GER = {}
+ERA_UK = {}
+ERA_GER = {}
 
-# Drop unnecessary dim from GPM rp
-GPM_rp10 = GPM_rp10.sel(return_period=10)
-GPM_rp10 = GPM_rp10.rename({'lon':'longitude', 'lat':'latitude'})
-GPM_rp10 = GPM_rp10.reset_coords('return_period', drop=True)
+# read GMP and ERA5 data
+for rp in rps:
+    # UK
+    GPM_UK[str(rp)] = read_GPM(rp, 'UK')
+    ERA_UK[str(rp)] = xr.open_dataset('Data/ERA/UK/ERA_UK_rp'+str(rp)+'.nc4')['r'+str(rp)+'yrrp']
+    # GER
+    GPM_GER[str(rp)] = read_GPM(rp, 'GER')
+    ERA_GER[str(rp)] = xr.open_dataset('Data/ERA/GER/ERA_GER_rp'+str(rp)+'.nc4')['r'+str(rp)+'yrrp']
 
-#%% Plot RP in comparision to ERA5
+#%% Plot GPM and ERA5 data
 
-# Set Colorbar
-max = 120
-min = 40
-levels = 21
-cmap = ccm.cm.rain
-# Plot
-fig, axes = plt.subplots(1, 2, subplot_kw={'projection': ccrs.PlateCarree()}, figsize=(10, 5.5), sharey=True)
-axes[0].add_feature(ft.OCEAN, zorder=1, color='grey')
-axes[1].add_feature(ft.OCEAN, zorder=1, color='grey')
-GPM_rp10.precipitationCal.plot.contourf(ax=axes[0], x='longitude', y='latitude', transform=ccrs.PlateCarree(),
-                                        vmax=max, vmin=min, levels=levels, add_colorbar=False, cmap=cmap, extend='both')
-cm = ERA_rp10.r10yrrp.plot.contourf(ax=axes[1], transform=ccrs.PlateCarree(), vmax=max, vmin=min, levels=levels,
-                                    add_colorbar=False, cmap=cmap, extend='both')
-
-# Add Grid and Labels
-for ax in axes:
-    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='k', alpha=0.5, linestyle='--')
-    gl.top_labels = False
-    gl.right_labels = False
-    ax.set_xlim(-10.95, 1.95)
-    ax.set_ylim(49.55, 59.95)
-gl.left_labels = False
-
-# Add Colorbar
-fig.subplots_adjust(bottom=0.13)
-cbar_ax = fig.add_axes([0.15, 0.1, 0.7, 0.05])
-fig.colorbar(cm, cax=cbar_ax, orientation='horizontal', pad=0.01, label='Daily Precipitation [mm]')
-
-# Titles
-axes[0].set_title('GPM')
-axes[1].set_title('ERA5')
+for rp in rps:
+    # UK
+    plot_ERA_GPM(ERA_UK[str(rp)], GPM_UK[str(rp)], rp, c_min=20, c_max=180, levels=21, land='UK',
+                 lon_min=-11, lon_max=2, lat_min=49.5, lat_max=60)
+    # GER
+    plot_ERA_GPM(ERA_GER[str(rp)], GPM_GER[str(rp)], rp, c_min=20, c_max=180, levels=21, land='GER',
+                 lon_min=5, lon_max=15.5, lat_min=47, lat_max=55)
 
 
-# Save and show
-plt.savefig('Plots/10yRP_GPM_ERA.png', bbox_inches='tight')
-plt.show()
 
 
 # %% Plot difference
 
+GPM_rp10 = GPM_UK['10']
+ERA_rp10 = ERA_UK['10']
+
 # calculate difference
-diff = np.flip(GPM_rp10.precipitationCal.values.T, axis=0) - ERA_rp10.r10yrrp.values
+diff = np.flip(GPM_rp10.precipitationCal.values.T, axis=0) - ERA_rp10.values
 lat, lon = np.meshgrid(ERA_rp10.latitude.values, ERA_rp10.longitude.values)
 
 # norm for colorbar
