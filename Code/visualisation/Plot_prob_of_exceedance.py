@@ -7,12 +7,18 @@ import matplotlib.pyplot as plt
 
 #  define functions
 
-def Read_ensemble(land, dataset):
-    Ens = xr.open_mfdataset('Data/' + dataset + '/' + land + '/RP_output/*.nc', combine='nested',
+def Read_ensemble_GER(dataset):
+    Ens = xr.open_mfdataset('Data/' + dataset + '/GER/RP_output/*.nc', combine='nested',
                             concat_dim=['ens_mem'])
     Ens = Ens.assign_coords({'ens_mem': np.arange(0, 18)})
     return Ens
 
+def Read_ensemble_UK(dataset, event):
+    Ens = xr.open_mfdataset('Data/' + dataset + '/UK/' + event + '/*.nc', combine='nested',
+                            concat_dim=['ens_mem'])
+    Ens = Ens.assign_coords({'ens_mem': np.arange(0, 18)})
+    Ens = Ens.rename({'unknown': 'return_period'})
+    return Ens
 
 def Calculate_exc_prob(Ens, rp):
     # Calculate probability of exceedance
@@ -56,9 +62,13 @@ def Plot_number_of_members(Num, ax, title, lon_min=5, lon_max=15.5, lat_min=47, 
     return cm
 
 
-def Plot_exc_prob_GPM(land, lon_min=5, lon_max=15.5, lat_min=47, lat_max=55):
+def Plot_exc_prob_GPM(land, event=None, lon_min=5, lon_max=15.5, lat_min=47, lat_max=55):
     # Read data
-    GPM_ens = Read_ensemble(land, dataset='GPM')
+    if land == 'GER':
+        GPM_ens = Read_ensemble_GER('ERA')
+
+    if land == 'UK':
+        GPM_ens = Read_ensemble_UK('ERA', event)
 
     # Calculate Prob of Exceedance
 
@@ -80,9 +90,13 @@ def Plot_exc_prob_GPM(land, lon_min=5, lon_max=15.5, lat_min=47, lat_max=55):
     plt.savefig('Plots/' + land + '/casestudy/GPM_ex_prob.png', bbox_inches='tight')
 
 
-def Plot_num_memb_GPM(land, lon_min=5, lon_max=15.5, lat_min=47, lat_max=55):
+def Plot_num_memb_GPM(land, event=None, lon_min=5, lon_max=15.5, lat_min=47, lat_max=55):
     # Read data
-    GPM_ens = Read_ensemble(land, dataset='GPM')
+    if land == 'GER':
+        GPM_ens = Read_ensemble_GER('ERA')
+
+    if land == 'UK':
+        GPM_ens = Read_ensemble_UK('ERA', event)
 
     # Calculate Prob of Exceedance
 
@@ -105,9 +119,13 @@ def Plot_num_memb_GPM(land, lon_min=5, lon_max=15.5, lat_min=47, lat_max=55):
     plt.savefig('Plots/' + land + '/casestudy/GPM_num_members.png', bbox_inches='tight')
 
 
-def Plot_exc_prob_ERA(land, lon_min=5, lon_max=15.5, lat_min=47, lat_max=55):
+def Plot_exc_prob_ERA(land, event=None, lon_min=5, lon_max=15.5, lat_min=47, lat_max=55):
     # Read data
-    ERA_ens = Read_ensemble(land, dataset='ERA')
+    if land == 'GER':
+        ERA_ens = Read_ensemble_GER('ERA')
+
+    if land == 'UK':
+        ERA_ens = Read_ensemble_UK('ERA', event)
 
     # Calculate Prob of Exceedance
 
@@ -132,9 +150,13 @@ def Plot_exc_prob_ERA(land, lon_min=5, lon_max=15.5, lat_min=47, lat_max=55):
     plt.savefig('Plots/' + land + '/casestudy/ERA_ex_prob.png', bbox_inches='tight')
 
 
-def Plot_num_memb_ERA(land, lon_min=5, lon_max=15.5, lat_min=47, lat_max=55):
+def Plot_num_memb_ERA(land, event=None,  lon_min=5, lon_max=15.5, lat_min=47, lat_max=55):
     # Read data
-    ERA_ens = Read_ensemble(land, dataset='ERA')
+    if land == 'GER':
+        ERA_ens = Read_ensemble_GER('ERA')
+
+    if land == 'UK':
+        ERA_ens = Read_ensemble_UK('ERA', event)
 
     # Calculate Prob of Exceedance
 
