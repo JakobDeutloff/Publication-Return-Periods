@@ -268,8 +268,9 @@ def calculating_return_periods(file, returnpath, flood, i):
     return
 
 def main():
-    filepath = "/Users/dangiles/Documents/MetOffice/DataChallenge/Forecast_Data/"
-    returnpath = "/Users/dangiles/Documents/MetOffice/DataChallenge/ReturnPeriods/"
+    # Define users paths
+    filepath = ""
+    returnpath = ""
 
     # Defining the event and its folder
     flood = {"event": "GER", "ens_folder": "mogrepsg", "forecast" : "20210711T1800Z", "start_date" : "2021071119", "lead_time" : "132", "precip_type" : ["rainfall_accumulation_from_convection-PT01H", "rainfall_accumulation-PT01H", "snowfall_accumulation_from_convection-PT01H", "snowfall_accumulation-PT01H"]}
