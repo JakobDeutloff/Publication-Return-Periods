@@ -39,7 +39,7 @@ def Plot_exceedance_prob(Prob, ax, title, transform, lon_min=5, lon_max=15.5, la
     levels = np.arange(0, 110, 10)
     levels[0] = 1
 
-    cm = Prob.plot.contourf(ax=ax, transform=transform, levels=levels, cmap='YlOrBr', add_colorbar=False,
+    cm = Prob.plot.contourf(ax=ax, transform=transform, levels=levels, cmap='PuRd', add_colorbar=False,
                             extend='neither')
 
     ax.coastlines()
@@ -53,7 +53,7 @@ def Plot_exceedance_prob(Prob, ax, title, transform, lon_min=5, lon_max=15.5, la
 def Plot_number_of_members(Num, ax, title, transform, lon_min=5, lon_max=15.5, lat_min=47, lat_max=55):
     levels = np.arange(0.5, 19.5, 1)
 
-    cm = Num.plot.contourf(ax=ax, transform=transform, levels=levels, cmap='YlOrBr', add_colorbar=False,
+    cm = Num.plot.contourf(ax=ax, transform=transform, levels=levels, cmap='PuRd', add_colorbar=False,
                            extend='neither')
 
     ax.coastlines()
@@ -88,7 +88,7 @@ def Plot_exc_prob_GPM(land, event=None, lon_min=5, lon_max=15.5, lat_min=47, lat
     ex_prob['25'] = Calculate_exc_prob(GPM_ens, 25)
 
     # Plot
-    fig, axes = plt.subplots(1, 3, figsize=figsize, subplot_kw={'projection': ccrs.PlateCarree()})
+    fig, axes = plt.subplots(1, 3, figsize=figsize, subplot_kw={'projection': ccrs.Miller()})
     rps = list(ex_prob.keys())
     for i in range(3):
         cm = Plot_exceedance_prob(ex_prob[rps[i]], axes[i], title=rps[i], transform=transform,
@@ -137,7 +137,7 @@ def Plot_num_memb_GPM(land, event=None, lon_min=5, lon_max=15.5, lat_min=47, lat
     num['25'] = Calculate_number_of_members(GPM_ens, 25)
 
     # Plot
-    fig, axes = plt.subplots(1, 3, figsize=figsize, subplot_kw={'projection': ccrs.PlateCarree()}, sharey='row',
+    fig, axes = plt.subplots(1, 3, figsize=figsize, subplot_kw={'projection': ccrs.Miller()}, sharey='row',
                              sharex='col')
     rps = list(num.keys())
     for i in range(3):
@@ -170,7 +170,7 @@ def Plot_exc_prob_ERA(land, event=None, lon_min=5, lon_max=15.5, lat_min=47, lat
     if land == 'GER':
         ERA_ens = Read_ensemble_GER('ERA', event)
         transform = ccrs.PlateCarree()
-        figsize = (11, 8)
+        figsize = (11, 9)
 
     if land == 'UK':
         ERA_ens = Read_ensemble_UK('ERA', event)
@@ -190,7 +190,7 @@ def Plot_exc_prob_ERA(land, event=None, lon_min=5, lon_max=15.5, lat_min=47, lat
     ex_prob['100'] = Calculate_exc_prob(ERA_ens, 100)
 
     # Plot
-    fig, axes = plt.subplots(2, 3, figsize=figsize, subplot_kw={'projection': ccrs.PlateCarree()})
+    fig, axes = plt.subplots(2, 3, figsize=figsize, subplot_kw={'projection': ccrs.Miller()})
     rps = list(ex_prob.keys())
     for i in range(5):
         cm = Plot_exceedance_prob(ex_prob[rps[i]], axes.flatten()[i], title=rps[i], transform=transform,
@@ -228,7 +228,7 @@ def Plot_num_memb_ERA(land, event=None, lon_min=5, lon_max=15.5, lat_min=47, lat
     if land == 'GER':
         ERA_ens = Read_ensemble_GER('ERA', event)
         transform = ccrs.PlateCarree()
-        figsize = (11, 8)
+        figsize = (11, 9)
 
     if land == 'UK':
         ERA_ens = Read_ensemble_UK('ERA', event)
@@ -248,7 +248,7 @@ def Plot_num_memb_ERA(land, event=None, lon_min=5, lon_max=15.5, lat_min=47, lat
     num['100'] = Calculate_number_of_members(ERA_ens, 100)
 
     # Plot
-    fig, axes = plt.subplots(2, 3, figsize=figsize, subplot_kw={'projection': ccrs.PlateCarree()}, sharex='col',
+    fig, axes = plt.subplots(2, 3, figsize=figsize, subplot_kw={'projection': ccrs.Miller()}, sharex='col',
                              sharey='row')
     rps = list(num.keys())
     for i in range(5):
@@ -285,10 +285,10 @@ def Plot_num_memb_ERA(land, event=None, lon_min=5, lon_max=15.5, lat_min=47, lat
 
 # %%
 if __name__ == '__main__':
-    # Plot_exc_prob_GPM(land='GER', event='20210711T1800Z')
-    # Plot_num_memb_GPM(land='GER', event='20210711T1800Z')
-    # Plot_exc_prob_ERA(land='GER', event='20210711T1800Z')
-    # Plot_num_memb_ERA(land='GER', event='20210711T1800Z')
+    Plot_exc_prob_GPM(land='GER', event='20210711T1800Z')
+    Plot_num_memb_GPM(land='GER', event='20210711T1800Z')
+    Plot_exc_prob_ERA(land='GER', event='20210711T1800Z')
+    Plot_num_memb_ERA(land='GER', event='20210711T1800Z')
 
     Plot_exc_prob_GPM(land='UK', event='20210723T2100Z', lon_min=-3, lon_max=2, lat_max=50.5, lat_min=53)
     Plot_num_memb_GPM(land='UK', event='20210723T2100Z', lon_min=-3, lon_max=2, lat_max=50.5, lat_min=53)
