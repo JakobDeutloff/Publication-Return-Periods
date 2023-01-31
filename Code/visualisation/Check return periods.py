@@ -1,7 +1,6 @@
 """
 This script contains some code to inspect and plot the GPM return periods to see if the calculation procedure is valid.
 """
-
 import matplotlib.pyplot as plt
 import matplotlib
 import numpy as np
@@ -13,6 +12,7 @@ import cmocean as ccm
 from xclim.indices.generic import select_resample_op
 from xclim.indices.stats import fit, parametric_quantile
 from scipy.stats import genextreme
+
 
 # %% set font size
 matplotlib.rcParams.update({'font.size': 12})
@@ -150,6 +150,10 @@ for rp in rps:
 
 # %% Plot return periods and difference
 
+# coords scotland
+lon_scot = -4.9
+lat_scot = 56.5
+
 # set rp
 rp = '25'
 
@@ -159,14 +163,15 @@ cms = np.empty(axes.shape).tolist()
 gls = np.empty(axes.shape).tolist()
 
 # Plot UK
-cms[0][0], gls[0][0] = plot_RP(axes[0, 0], ERA_UK[rp], title='EPI', c_min=20, c_max=180, levels=21, lon_min=-11,
-                               lon_max=2, lat_min=49.5, lat_max=60)
+cms[0][0], gls[0][0] = plot_RP(axes[0, 0], ERA_UK[rp], title='EPI', c_min=20, c_max=180, levels=21, lon_min=-8,
+                               lon_max=2, lat_min=49.9, lat_max=58.5)
 cms[0][1], gls[0][1] = plot_RP(axes[0, 1], GPM_UK[rp].precipitationCal, title='GPM', c_min=20, c_max=180, levels=21,
-                               lon_min=-11, lon_max=2, lat_min=49.5, lat_max=60)
+                               lon_min=-8, lon_max=2, lat_min=49.9, lat_max=58.5)
 gls[0][1].left_labels = False
-cms[0][2], gls[0][2] = plot_difference(axes[0, 2], GPM_UK[rp].precipitationCal, ERA_UK[rp], title='GPM - EPA',
-                                       lon_min=-11, lon_max=2, lat_min=49.5, lat_max=60)
+cms[0][2], gls[0][2] = plot_difference(axes[0, 2], GPM_UK[rp].precipitationCal, ERA_UK[rp], title='GPM - EPI',
+                                       lon_min=-8, lon_max=2, lat_min=49.9, lat_max=58.5)
 gls[0][2].left_labels = False
+axes[0, 1].plot(lon_scot, lat_scot, color='red', marker='o', transform=ccrs.PlateCarree())
 
 # Plot GER
 cms[1][0], gls[1][0] = plot_RP(axes[1, 0], ERA_GER[rp], title='EPI', c_min=20, c_max=180, levels=21, lon_min=5, lon_max=15.5,
@@ -186,6 +191,10 @@ fig.colorbar(cms[0][0], cax=cbar_ax1, orientation='horizontal', pad=0.01, label=
 fig.colorbar(cms[0][2], cax=cbar_ax2, orientation='horizontal', pad=0.01, label='Daily Precipitation [mm]')
 plt.savefig('Plots/Comparison_rp' + rp +'.png', bbox_inches='tight')
 plt.show()
+# %% Extract specific values
+val_ERA = ERA_UK['25'].sel(latitude=lat_scot, longitude=lon_scot, method='nearest')
+val_GPM = GPM_UK['25'].precipitationCal.sel(latitude=lat_scot, longitude=lon_scot, method='nearest')
+diff = val_GPM.values - val_ERA.values
 
 
 # %% Plot difference

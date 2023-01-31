@@ -34,7 +34,7 @@ def plot_max(land, event, lon_min=-3, lon_max=2, lat_max=50.5, lat_min=53, box=N
                 central_latitude=central_latitude,
                 central_longitude=central_longitude)
 
-        figsize = (5, 5)
+        figsize = (5, 4)
 
 
     # calculate max rp
@@ -53,7 +53,6 @@ def plot_max(land, event, lon_min=-3, lon_max=2, lat_max=50.5, lat_min=53, box=N
     ax.add_feature(feature.OCEAN, zorder=1, color='grey')
     ax.add_feature(feature.BORDERS)
     ax.set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
-    ax.set_title('Maximum RP  ' + event)
 
     # draw gridlines
     gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='k', alpha=0.5, linestyle='--')
@@ -61,7 +60,7 @@ def plot_max(land, event, lon_min=-3, lon_max=2, lat_max=50.5, lat_min=53, box=N
     gl.right_labels = False
 
     # add colorbar
-    fig.subplots_adjust(bottom=0.15)
+    fig.subplots_adjust(bottom=0.2)
     cbar_ax = fig.add_axes([0.15, 0.1, 0.7, 0.04])
     c_bar = fig.colorbar(cm, cax=cbar_ax, orientation='horizontal', pad=0.01, label='Return Period')
     c_bar.set_ticks([5, 10, 25, 50, 100])
@@ -80,5 +79,5 @@ if __name__ == '__main__':
     box_london = [-0.6, 0.4, 51.7, 51.3]
     box_cardif = [-3.3, -2.9, 51.75, 51.45]
     plot_max('UK', event='20210723T2100Z', lon_min=-3, lon_max=2, lat_max=50.5, lat_min=53, box=box_london)
-    plot_max('UK', event='202002080300', lon_min=-6, lon_max=2, lat_max=50, lat_min=56, box=box_cardif)
-    #plot_max('GER', event='20210711T1800Z', lon_min=5, lon_max=15.5, lat_min=47, lat_max=55)
+    # plot_max('UK', event='202002080300', lon_min=-6, lon_max=2, lat_max=50, lat_min=56, box=box_cardif)
+    #plot_max('GER', event='20210711T1800Z', lon_min=5.7, lon_max=15, lat_min=47.3, lat_max=55)
